@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Models{% endblock %}
+{% block content %}
+<h1>Model comparison</h1>
+{% if not m %}
+<div class="note">No metrics found. Run <code>python train_models.py</code> first.</div>
+{% else %}
+<p class="sub">Four classifiers trained on {{ '{:,}'.format(m.n_train) }} records and evaluated on {{ '{:,}'.format(m.n_test) }} unseen records. Best by weighted F1: <b>{{ m.best }}</b>.</p>
+
+<div class="card" style="margin-bottom:18px">
+  <table>
+    <thead><tr><th>Model</th><th class="num">Accuracy</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1</th><th class="num">F1 (High)</th><th class="num">Train time</th></tr></thead>
+    <tbody>
+    {% for name, r in m.results.items() %}
+      <tr class="{{ 'best' if name == m.best }}"><td>{{ name }}{% if name == m.best %} ★{% endif %}</td>
+        <td class="num">{{ '%.1f' % (r.accuracy*100) }}%</td><td class="num">{{ '%.1f' % (r.precision*100) }}%</td>
+        <td class="num">{{ '%.1f' % (r.recall*100) }}%</td><td class="num">{{ '%.1f' % (r.f1*100) }}%</td>
+        <td class="num">{{ '%.1f' % (r.f1_high*100) }}%</td><td class="num">{{ '%.1f' % r.train_seconds }}s</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p style="color:var(--muted);font-size:13px;margin:10px 0 0">Precision, recall and F1 are weighted by class size. "F1 (High)" scores only the High class, the one that matters most for alerts.</p>
+</div>
+
+<div class="grid g2">
+  <div class="card"><h2>Scores side by side</h2><img alt="Grouped bars comparing the four models" src="data:image/png;base64,{{ charts.compare }}"></div>
+  <div class="card"><h2>What drives predictions</h2><img alt="Top features by importance" src="data:image/png;base64,{{ charts.imp }}"></div>
+</div>
+<div class="card" style="margin-top:18px"><h2>Confusion matrices (counts, shaded by row %)</h2>
+  <div class="cms">{% for name, img in charts.cms.items() %}<img alt="Confusion matrix for {{ name }}" src="data:image/png;base64,{{ img }}">{% endfor %}</div>
+</div>
+{% endif %}
+{% endblock %}

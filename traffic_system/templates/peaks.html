@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Peak periods{% endblock %}
+{% block content %}
+<h1>Peak traffic periods</h1>
+<p class="sub">When congestion is most likely, across the network and road by road.</p>
+
+<div class="callout">Network-wide, High congestion clusters around <b>{{ top_hours | join(', ') }}</b>, and <b>{{ worst_day }}</b> is the worst day overall.</div>
+
+<div class="card" style="margin-bottom:18px"><img alt="Share of High congestion hours by hour of day" src="data:image/png;base64,{{ chart }}"></div>
+
+<div class="card">
+  <h2>Peaks by road (ranked by share of High-congestion weekday hours)</h2>
+  <table>
+    <thead><tr><th>Road</th><th>Weekday peak hours</th><th>Weekend peak hours</th><th class="num">Peak volume / hr</th><th class="num">High hours (weekday)</th></tr></thead>
+    <tbody>
+    {% for r in table %}
+      <tr><td>{{ r.road }}</td><td>{{ r.weekday_peak }}</td><td>{{ r.weekend_peak }}</td><td class="num">{{ '{:,}'.format(r.peak_volume) }}</td><td class="num">{{ r.high_hours_pct }}%</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

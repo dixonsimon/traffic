@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Predict{% endblock %}
+{% block content %}
+<h1>Predict congestion</h1>
+<p class="sub">Search a road, set the time and conditions, and get a Low / Medium / High forecast.</p>
+
+{% if no_model %}
+<div class="note">No trained model found. Run <code>python train_models.py</code> first.</div>
+{% else %}
+<div class="card" style="margin-bottom:18px">
+<form method="post" class="form" autocomplete="off">
+  <div class="full search">
+    <label for="roadsearch">Road or location</label>
+    <input id="roadsearch" type="text" placeholder="Start typing, e.g. Anna, OMR, Old Town…"
+           value="{% for r in roads %}{% if r.road_id == form.road_id %}{{ r.road_name }}{% endif %}{% endfor %}">
+    <input type="hidden" name="road_id" id="road_id" value="{{ form.road_id }}">
+    <div class="suggest" id="suggest"></div>
+  </div>
+  <div><label>Day</label>
+    <select name="dow">{% for d in days %}<option value="{{ loop.index0 }}" {{ 'selected' if form.dow == loop.index0 }}>{{ d }}</option>{% endfor %}</select></div>
+  <div><label>Hour</label>
+    <select name="hour">{% for h in range(24) %}<option value="{{ h }}" {{ 'selected' if form.hour == h }}>{{ '%02d:00' % h }}</option>{% endfor %}</select></div>
+  <div><label>Temperature (°C)</label><input type="number" step="0.5" name="temp" value="{{ form.temp }}"></div>
+  <div><label>Weather</label>
+    <select name="weather">{% for w in weathers %}<option {{ 'selected' if form.weather == w }}>{{ w }}</option>{% endfor %}</select></div>
+  <div><label>Road condition</label>
+    <select name="road_condition">{% for c in conds %}<option {{ 'selected' if form.cond == c }}>{{ c }}</option>{% endfor %}</select></div>
+  <div style="align-self:end"><button type="submit">Predict</button></div>
+</form>
+</div>
+
+{% if result %}
+<div class="grid g2">
+  <div class="card">
+    <h2>{{ result.road.road_name }} · {{ result.hour_label }}</h2>
+    <p style="margin:6px 0 12px"><span class="badge {{ result.level }}">{{ result.level }} congestion</span></p>
+    <span class="pill">{{ result.road.area }}</span><span class="pill">{{ result.road.road_type }}</span>
+    <span class="pill">{{ result.road.lanes }} lanes</span><span class="pill">{{ result.road.speed_limit }} km/h limit</span>
+    <p style="color:var(--muted);margin:12px 0 0">Typical volume at this hour is about <b style="color:var(--ink)">{{ '{:,}'.format(result.hist_vol) }}</b> vehicles/hour, roughly {{ result.load_pct }}% of the road's capacity. Model: {{ result.model }}.</p>
+  </div>
+  <div class="card"><h2>Probability by level</h2><img alt="Predicted probability of each congestion level" src="data:image/png;base64,{{ result.prob_chart }}"></div>
+  <div class="card" style="grid-column:1/-1"><h2>The whole day on this road</h2><img alt="Predicted congestion for each hour of the day" src="data:image/png;base64,{{ result.day_chart }}"></div>
+</div>
+{% endif %}
+{% endif %}
+
+<script>
+const input = document.getElementById('roadsearch'), box = document.getElementById('suggest'), hid = document.getElementById('road_id');
+let t;
+input.addEventListener('input', () => {
+  clearTimeout(t);
+  t = setTimeout(async () => {
+    const r = await fetch('/api/roads?q=' + encodeURIComponent(input.value));
+    const rows = await r.json();
+    box.innerHTML = '';
+    rows.forEach(x => {
+      const d = document.createElement('div');
+      d.innerHTML = '<b>' + x.road_name + '</b><small>' + x.area + ' · ' + x.road_type + '</small>';
+      d.onclick = () => { input.value = x.road_name; hid.value = x.road_id; box.style.display = 'none'; };
+      box.appendChild(d);
+    });
+    box.style.display = rows.length ? 'block' : 'none';
+  }, 150);
+});
+input.addEventListener('focus', () => input.dispatchEvent(new Event('input')));
+document.addEventListener('click', e => { if (!e.target.closest('.search')) box.style.display = 'none'; });
+</script>
+{% endblock %}

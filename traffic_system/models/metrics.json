@@ -1,0 +1,124 @@
+{
+  "best": "Logistic Regression",
+  "results": {
+    "Logistic Regression": {
+      "accuracy": 0.9385127314814815,
+      "precision": 0.9391446342923708,
+      "recall": 0.9385127314814815,
+      "f1": 0.9387602672497549,
+      "f1_high": 0.9419139155871291,
+      "train_seconds": 0.5025923252105713,
+      "confusion": [
+        [
+          3647,
+          159,
+          0
+        ],
+        [
+          127,
+          1713,
+          59
+        ],
+        [
+          0,
+          80,
+          1127
+        ]
+      ]
+    },
+    "Decision Tree": {
+      "accuracy": 0.9327256944444444,
+      "precision": 0.9341060525749343,
+      "recall": 0.9327256944444444,
+      "f1": 0.9331998575748542,
+      "f1_high": 0.936026936026936,
+      "train_seconds": 0.21799564361572266,
+      "confusion": [
+        [
+          3621,
+          185,
+          0
+        ],
+        [
+          128,
+          1714,
+          57
+        ],
+        [
+          0,
+          95,
+          1112
+        ]
+      ]
+    },
+    "Random Forest": {
+      "accuracy": 0.9320023148148148,
+      "precision": 0.9329840982519118,
+      "recall": 0.9320023148148148,
+      "f1": 0.9323559471818454,
+      "f1_high": 0.9264396805380412,
+      "train_seconds": 1.0085289478302002,
+      "confusion": [
+        [
+          3639,
+          167,
+          0
+        ],
+        [
+          128,
+          1701,
+          70
+        ],
+        [
+          0,
+          105,
+          1102
+        ]
+      ]
+    },
+    "K-Nearest Neighbors": {
+      "accuracy": 0.9110243055555556,
+      "precision": 0.9124340122616827,
+      "recall": 0.9110243055555556,
+      "f1": 0.9111758671144746,
+      "f1_high": 0.900523560209424,
+      "train_seconds": 0.10626745223999023,
+      "confusion": [
+        [
+          3634,
+          172,
+          0
+        ],
+        [
+          215,
+          1631,
+          53
+        ],
+        [
+          4,
+          171,
+          1032
+        ]
+      ]
+    }
+  },
+  "levels": [
+    "Low",
+    "Medium",
+    "High"
+  ],
+  "n_train": 27648,
+  "n_test": 6912,
+  "importances": {
+    "num__hist_ratio": 0.3972,
+    "num__hist_volume": 0.1655,
+    "num__hour": 0.1193,
+    "num__hist_prev_volume": 0.074,
+    "num__temperature": 0.0711,
+    "num__visibility_km": 0.029,
+    "num__capacity": 0.0175,
+    "num__day_of_week": 0.0164,
+    "cat__road_condition_Accident": 0.0136,
+    "cat__road_condition_Roadwork": 0.0116
+  }
+}

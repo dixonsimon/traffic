@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Trends{% endblock %}
+{% block content %}
+<h1>Congestion trends</h1>
+<p class="sub">How traffic builds and eases by hour and by day.</p>
+
+<form method="get" class="card" style="margin-bottom:18px;display:flex;gap:12px;align-items:end;flex-wrap:wrap">
+  <div style="flex:1;min-width:240px"><label for="rid">Road</label>
+    <select id="rid" name="road_id" onchange="this.form.submit()">
+      <option value="">All roads</option>
+      {% for r in roads %}<option value="{{ r.road_id }}" {{ 'selected' if sel and sel.road_id == r.road_id }}>{{ r.road_name }} ({{ r.area }})</option>{% endfor %}
+    </select></div>
+  <noscript><button type="submit">Show</button></noscript>
+</form>
+
+<div class="grid g2">
+  <div class="card"><h2>By hour</h2><img alt="Hourly traffic trend" src="data:image/png;base64,{{ charts.hourly }}"></div>
+  <div class="card"><h2>By day</h2><img alt="Daily traffic trend" src="data:image/png;base64,{{ charts.daily }}"></div>
+  <div class="card" style="grid-column:1/-1"><h2>Day × hour load</h2><img alt="Heatmap of load by day and hour" src="data:image/png;base64,{{ charts.heat }}"></div>
+</div>
+{% endblock %}

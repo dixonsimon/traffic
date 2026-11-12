@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Traffic analytics dashboard</h1>
+<p class="sub">Historical traffic across {{ d.kpi.roads }} monitored roads{% if best %} · prediction model: {{ best }}{% endif %}</p>
+
+<div class="grid kpis">
+  <div class="card kpi"><div class="l">Records analysed</div><div class="v">{{ d.kpi.records }}</div></div>
+  <div class="card kpi"><div class="l">Avg volume</div><div class="v">{{ d.kpi.vol }}</div><div class="n">vehicles / hour</div></div>
+  <div class="card kpi"><div class="l">Avg speed</div><div class="v">{{ d.kpi.speed }}</div><div class="n">km/h</div></div>
+  <div class="card kpi"><div class="l">Hours with High congestion</div><div class="v">{{ d.kpi.high }}</div></div>
+  <div class="card kpi"><div class="l">Most congested road</div><div class="v" style="font-size:19px;line-height:1.25;padding-top:6px">{{ d.kpi.worst }}</div><div class="n">{{ d.kpi.worst_pct }} of hours High</div></div>
+</div>
+
+<div class="grid g2">
+  <div class="card"><h2>Hourly trend</h2><img alt="Average traffic volume by hour, weekday vs weekend" src="data:image/png;base64,{{ d.hourly }}"></div>
+  <div class="card"><h2>Daily trend</h2><img alt="Average traffic volume by day of week" src="data:image/png;base64,{{ d.daily }}"></div>
+  <div class="card" style="grid-column:1/-1"><h2>When is it busiest?</h2><img alt="Heatmap of traffic load by day and hour" src="data:image/png;base64,{{ d.heat }}"></div>
+  <div class="card"><h2>Congestion by road</h2><img alt="Stacked bars of congestion levels per road" src="data:image/png;base64,{{ d.mix }}"></div>
+  <div class="card"><h2>Weather impact</h2><img alt="Share of High congestion hours by weather" src="data:image/png;base64,{{ d.weather }}"></div>
+</div>
+<p style="margin-top:20px"><a class="btn" href="/predict">Predict congestion →</a></p>
+{% endblock %}
